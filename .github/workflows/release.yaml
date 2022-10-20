@@ -1,0 +1,56 @@
+name: Release
+
+on: 
+  push:
+    tags:
+    - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: 'main'
+      - uses: montudor/action-zip@v1
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' 
+      - run: |
+          python sort_rime_file.py
+          function create_zip() {
+            SOURCE=`find ./ -name "$1" -type d`
+            cd $SOURCE
+            zip -qq -r ../../release/$2 ./
+            cd ..
+          }
+          function copy() {
+            SOURCE=`find ./ -name "$1" -type d`
+            cd $SOURCE
+            cp $2 ../../release/
+            cd ..
+          }
+          mkdir -p release
+          FOLDER=`find ./ -name "電腦RIME*" -type d`
+          cd $FOLDER
+          create_zip "注音洋蔥純注音版_*" "bopomo_onion.zip"
+          create_zip "洋蔥行列30_*" "onion-array30.zip"
+          copy "主程式" "Win_小狼毫主程式/weasel-0.14.3.0-installer.exe"
+          copy "主程式" "Win_小狼毫主程式/rime-with-plugins-1.7.3-win32.zip"
+          copy "其他" "Win小狼毫外觀設定檔/weasel.custom.yaml"
+          copy "其他" "Win小狼毫外觀設定檔/NotoSansCJK-Regular.zip"
+          copy "主程式" "Mac_鼠鬚管主程式/Squirrel-0.14.0.zip"
+          copy "主程式" "Mac_鼠鬚管主程式/rime-with-plugins-1.7.3-osx.zip"
+          copy "其他" "Mac鼠鬚管外觀設定檔/squirrel.custom.yaml"
+          cd ..
+      - uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: release/*
+          token: ${{ secrets.GITHUB_TOKEN }}
+          omitBody: true
+          omitBodyDuringUpdate: true
+          omitDraftDuringUpdate: true
