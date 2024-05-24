@@ -41,12 +41,12 @@ jobs:
 
           create_zip "注音洋蔥純注音版_*" "bopomo_onion.zip"
           create_zip "洋蔥行列30_*" "onion-array30.zip"
-          copy "Mac_官方鼠鬚管主程式" "Squirrel*"
+          copy "Mac_鼠鬚管主程式" "Squirrel*"
           copy "Mac鼠鬚管外觀設定檔" "squirrel*"
-          copy "Win_官方小狼毫主程式" "rime*"
-          copy "Win_官方小狼毫主程式" "weasel*"
-          copy "Win小狼毫外觀設定檔" "NotoSansCJK-Regular.zip"
+          copy "Win_舊0.14.3.0版小狼毫主程式" "rime*"
+          copy "Win_舊0.14.3.0版小狼毫主程式" "weasel*"
           copy "Win小狼毫外觀設定檔" "weasel.custom.yaml"
+          copy "Win小狼毫外觀設定檔" "NotoSansCJK-Regular.zip"
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
