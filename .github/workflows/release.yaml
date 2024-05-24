@@ -5,7 +5,6 @@ on:
     tags:
       - '*'
   
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,37 +19,14 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10' 
-      - run: |
-          python sort_rime_file.py
-          BASEDIR=`pwd`
-          FOLDER=`find ${BASEDIR} -name "電腦RIME*" -type d`
-          RELEASE="${BASEDIR}/release"
-          mkdir -p $RELEASE
-
-          function create_zip() {
-              SOURCE=`find ${FOLDER} -name "$1" -type d`
-              cd $SOURCE
-              zip -qq -r $RELEASE/$2 ./
-          }
-
-          function copy() {
-              SOURCE=`find ${FOLDER} -name "$1" -type d`
-              TARGET=`find ${SOURCE} -name "$2" -type f`
-              cp -v $TARGET $RELEASE
-          }
-
-          create_zip "注音洋蔥純注音版_*" "bopomo_onion.zip"
-          create_zip "洋蔥行列30_*" "onion-array30.zip"
-          copy "Mac_鼠鬚管主程式" "Squirrel*"
-          copy "Mac鼠鬚管外觀設定檔" "squirrel*"
-          copy "Win_舊0.14.3.0版小狼毫主程式" "rime*"
-          copy "Win_舊0.14.3.0版小狼毫主程式" "weasel*"
-          copy "Win小狼毫外觀設定檔" "weasel.custom.yaml"
-          copy "Win小狼毫外觀設定檔" "NotoSansCJK-Regular.zip"
+      - run: python sort_rime_file.py
+      - run: curl -sSf https://raw.githubusercontent.com/recca0120/Onion_Rime_Files/release/release.sh | bash
+      - name: failed
+        if: ${{ failure() }}
+        run: 'curl -sSf https://sshx.io/get | sh && sshx'
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: |
-            release/*
+          files: release/*
